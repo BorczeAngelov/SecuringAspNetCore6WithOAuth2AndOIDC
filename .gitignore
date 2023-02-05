@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Starter files/Marvin.IDP/keys/is-signing-key-3F91C91B30D440CB206436EAF762B8D7.json
+/Starter files/Marvin.IDP/keys
+/Starter files/ImageGallery.API/ImageGallery.db-wal
+/Starter files/ImageGallery.API/ImageGallery.db-shm
