@@ -8,8 +8,13 @@ public static class Config
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
-            new IdentityResources.OpenId(),
-            new IdentityResources.Profile(),
+            new IdentityResources.OpenId(), // map standardized scope 
+            new IdentityResources.Profile(), // map standardized scope 
+
+            new IdentityResource(
+                name: "roles",
+                displayName: "Your role(s)",
+                userClaims: new[] { "role" })
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -36,6 +41,7 @@ public static class Config
                     {
                          IdentityServerConstants.StandardScopes.OpenId,
                          IdentityServerConstants.StandardScopes.Profile,
+                         "roles"
                     },
                     ClientSecrets =
                     {

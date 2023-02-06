@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -25,7 +26,10 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.AccessDeniedPath = "/Authentication/AccessDenied";
+})
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -48,10 +52,19 @@ builder.Services.AddAuthentication(options =>
     // eg: options.SignedOutCallbackPath = new PathString("pathaftersignout");
 
     options.SaveTokens = true;
+
     options.GetClaimsFromUserInfoEndpoint = true;
     options.ClaimActions.Remove("aud");
     options.ClaimActions.DeleteClaim("sid");
     options.ClaimActions.DeleteClaim("idp");
+
+    options.Scope.Add("roles");
+    options.ClaimActions.MapJsonKey("role", "role");
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        NameClaimType = "given_name",
+        RoleClaimType = "role",
+    };
 });
 
 var app = builder.Build();
