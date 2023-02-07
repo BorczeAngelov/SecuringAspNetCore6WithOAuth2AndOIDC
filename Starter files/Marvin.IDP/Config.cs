@@ -17,9 +17,20 @@ public static class Config
                 userClaims: new[] { "role" })
         };
 
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        {
+            new ApiResource(name: "imagegalleryapi", displayName: "Image Gallery API")
+            {
+                Scopes = {"imagegalleryapi.fullaccess"}
+            }
+        };
+
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
-            { };
+            {
+                new ApiScope(name: "imagegalleryapi.fullaccess")
+            };
 
     public static IEnumerable<Client> Clients =>
         new Client[]
@@ -41,7 +52,8 @@ public static class Config
                     {
                          IdentityServerConstants.StandardScopes.OpenId,
                          IdentityServerConstants.StandardScopes.Profile,
-                         "roles"
+                         "roles",
+                         "imagegalleryapi.fullaccess",
                     },
                     ClientSecrets =
                     {
