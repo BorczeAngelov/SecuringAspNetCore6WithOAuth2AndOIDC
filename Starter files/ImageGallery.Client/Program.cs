@@ -12,6 +12,11 @@ builder.Services.AddControllersWithViews()
     .AddJsonOptions(configure => 
         configure.JsonSerializerOptions.PropertyNamingPolicy = null);
 
+// Access tokens are passed to the API as Bearer tokens
+// JwtBearerToken middleware is used to validate an access token at level of the API
+// ***
+// At level of API we use the User object to get Claims that are in the access token.
+// If we need additional Claims we can configure that at the level of the identity server.
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddAccessTokenManagement();
