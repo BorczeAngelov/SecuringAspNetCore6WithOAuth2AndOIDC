@@ -20,19 +20,16 @@ namespace ImageGallery.API.Controllers
             IWebHostEnvironment hostingEnvironment,
             IMapper mapper)
         {
-            _galleryRepository = galleryRepository ??
-                throw new ArgumentNullException(nameof(galleryRepository));
-            _hostingEnvironment = hostingEnvironment ??
-                throw new ArgumentNullException(nameof(hostingEnvironment));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
+            _galleryRepository = galleryRepository ?? throw new ArgumentNullException(nameof(galleryRepository));
+            _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<Image>>> GetImages()
         {
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            if (ownerId== null)
+            if (ownerId == null)
             {
                 throw new Exception("User identifier is missing from token.");
             }
@@ -50,6 +47,13 @@ namespace ImageGallery.API.Controllers
         [HttpGet("{id}", Name = "GetImage")]
         public async Task<ActionResult<Image>> GetImage(Guid id)
         {
+            //var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            //if (ownerId == null)
+            //{
+            //    //TODO: this should be replaced with Authorization Policies
+            //    throw new Exception("User identifier is missing from token.");
+            //}
+
             var imageFromRepo = await _galleryRepository.GetImageAsync(id);
 
             if (imageFromRepo == null)
@@ -63,7 +67,9 @@ namespace ImageGallery.API.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
+        [Authorize(Roles = "PayingUser")]
+        public async Task<ActionResult<Image>> CreateImage(
+            [FromBody] ImageForCreation imageForCreation)
         {
             // Automapper maps only the Title in our configuration
             var imageEntity = _mapper.Map<Entities.Image>(imageForCreation);
@@ -87,9 +93,14 @@ namespace ImageGallery.API.Controllers
             // fill out the filename
             imageEntity.FileName = fileName;
 
-            // ownerId should be set - can't save image in starter solution, will
-            // be fixed during the course
-            //imageEntity.OwnerId = ...;
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (ownerId == null)
+            {
+                throw new Exception("User identifier is missing from token.");
+            }
+            //we should get the ownerId from tokens and not from QueryParam or from Body because
+            //the values from the Token are signed and validated, therefore we know it is not tampered with. 
+            imageEntity.OwnerId = ownerId;
 
             // add and save.  
             _galleryRepository.AddImage(imageEntity);

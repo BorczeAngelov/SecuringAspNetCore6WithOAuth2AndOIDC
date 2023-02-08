@@ -20,7 +20,10 @@ public static class Config
     public static IEnumerable<ApiResource> ApiResources =>
         new ApiResource[]
         {
-            new ApiResource(name: "imagegalleryapi", displayName: "Image Gallery API")
+            new ApiResource(
+                name: "imagegalleryapi",
+                displayName: "Image Gallery API",
+                new [] { "role" })
             {
                 Scopes = {"imagegalleryapi.fullaccess"}
             }
