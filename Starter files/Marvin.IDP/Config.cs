@@ -19,7 +19,12 @@ public static class Config
             new IdentityResource(
                 name: "roles",
                 displayName: "Your role(s)",
-                userClaims: new[] { "role" })
+                userClaims: new[] { "role" }),
+
+            new IdentityResource(
+                name: "country",
+                displayName: "The country you're living in",
+                userClaims: new List<string> { "country" }),
         };
 
     public static IEnumerable<ApiResource> ApiResources =>
@@ -28,7 +33,7 @@ public static class Config
             new ApiResource(
                 name: "imagegalleryapi",
                 displayName: "Image Gallery API",
-                new [] { "role" })
+                new [] { "role", "country" })
             {
                 Scopes = {"imagegalleryapi.fullaccess"}
             }
@@ -62,6 +67,7 @@ public static class Config
                          IdentityServerConstants.StandardScopes.Profile,
                          "roles",
                          "imagegalleryapi.fullaccess",
+                         "country"
                     },
                     ClientSecrets =
                     {

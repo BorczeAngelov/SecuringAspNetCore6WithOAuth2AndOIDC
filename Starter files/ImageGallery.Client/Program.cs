@@ -1,3 +1,4 @@
+using ImageGallery.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -67,13 +68,22 @@ builder.Services.AddAuthentication(options =>
 
     options.Scope.Add("roles");
     options.Scope.Add("imagegalleryapi.fullaccess");
+    options.Scope.Add("country");
 
     options.ClaimActions.MapJsonKey("role", "role");
+    options.ClaimActions.MapUniqueJsonKey("country", "country");
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         NameClaimType = "given_name",
         RoleClaimType = "role",
     };
+});
+
+builder.Services.AddAuthorization(authorizationOptions =>
+{
+    authorizationOptions.AddPolicy(
+        name: "UserCanAddImage",
+        policy: AuthorizationPolicies.CanAddImage());
 });
 
 var app = builder.Build();
