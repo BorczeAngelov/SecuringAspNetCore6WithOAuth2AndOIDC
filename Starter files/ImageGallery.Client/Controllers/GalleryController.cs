@@ -191,8 +191,8 @@ namespace ImageGallery.Client.Controllers
         {
             // get the saved identity token
             var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
-
             var accessToekn = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
 
             var userClaimsStringBuilder = new StringBuilder();
             foreach (var claim in base.User.Claims)
@@ -205,6 +205,8 @@ namespace ImageGallery.Client.Controllers
                 $"\n{identityToken} \n{userClaimsStringBuilder}");
             _logger.LogInformation($"Access token: " +
                 $"\n{accessToekn}");
+            _logger.LogInformation($"Refresh token: " +
+                $"\n{refreshToken}");
         }
     }
 }

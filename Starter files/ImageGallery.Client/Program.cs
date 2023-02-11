@@ -28,7 +28,7 @@ builder.Services.AddHttpClient("APIClient", client =>
     client.BaseAddress = new Uri(builder.Configuration["ImageGalleryAPIRoot"]);
     client.DefaultRequestHeaders.Clear();
     client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-}).AddUserAccessTokenHandler();
+}).AddUserAccessTokenHandler(); //also used for refresh token for "long-lived" access
 
 builder.Services.AddAuthentication(options =>
 {
@@ -71,6 +71,8 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("imagegalleryapi.read");
     options.Scope.Add("imagegalleryapi.write");
     options.Scope.Add("country");
+
+    options.Scope.Add("offline_access"); // for refresh Token
 
     options.ClaimActions.MapJsonKey("role", "role");
     options.ClaimActions.MapUniqueJsonKey("country", "country");
