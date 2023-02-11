@@ -40,7 +40,8 @@ public static class Config
                     "imagegalleryapi.fullaccess",
                     "imagegalleryapi.read",
                     "imagegalleryapi.write",
-                }
+                },
+                ApiSecrets = { new Secret("apisecret".Sha256()) }
             }
         };
 
@@ -60,6 +61,8 @@ public static class Config
                     ClientName = "Image Gallery",
                     ClientId= "imagegalleryclient",
                     AllowedGrantTypes = GrantTypes.Code,
+
+                    AccessTokenType = AccessTokenType.Reference, // we replace Jwt with RefrenceToken
 
                     AllowOfflineAccess = true,
                     UpdateAccessTokenClaimsOnRefresh = true,
