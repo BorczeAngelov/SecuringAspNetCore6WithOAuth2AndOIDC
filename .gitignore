@@ -352,3 +352,6 @@ MigrationBackup/
 /Starter files/Marvin.IDP/keys
 /Starter files/ImageGallery.API/ImageGallery.db-wal
 /Starter files/ImageGallery.API/ImageGallery.db-shm
+/Starter files/Marvin.IDP/MarvinIdentity.db
+/Starter files/Marvin.IDP/MarvinIdentity.db-wal
+/Starter files/Marvin.IDP/MarvinIdentity.db-shm
