@@ -55,10 +55,11 @@ namespace Marvin.IDP.Pages.User.Registration
             // create user & claims
             var userToCreate = new Entities.User
             {
+                //Password= Input.Password, // dont store clear text pass, first hash & salt
                 UserName = Input.UserName,
                 Subject = Guid.NewGuid().ToString(),
                 //Email = Input.Email,
-                Active = false 
+                Active = false
             };
             userToCreate.Claims.Add(new Entities.UserClaim()
             {
@@ -78,7 +79,7 @@ namespace Marvin.IDP.Pages.User.Registration
                 Value = Input.FamilyName
             });
 
-            _localUserService.AddUser(userToCreate);
+            _localUserService.AddUser(userToCreate, Input.Password); // it will hash & salt pass
             await _localUserService.SaveChangesAsync();
 
             //// create an activation link - we need an absolute URL, therefore
