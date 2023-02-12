@@ -58,7 +58,7 @@ namespace Marvin.IDP.Pages.User.Registration
                 //Password= Input.Password, // dont store clear text pass, first hash & salt
                 UserName = Input.UserName,
                 Subject = Guid.NewGuid().ToString(),
-                //Email = Input.Email,
+                Email = Input.Email,
                 Active = false
             };
             userToCreate.Claims.Add(new Entities.UserClaim()
@@ -82,29 +82,31 @@ namespace Marvin.IDP.Pages.User.Registration
             _localUserService.AddUser(userToCreate, Input.Password); // it will hash & salt pass
             await _localUserService.SaveChangesAsync();
 
-            //// create an activation link - we need an absolute URL, therefore
-            //// we use Url.PageLink instead of Url.Page
-            //var activationLink = Url.PageLink("/user/activation/index",
-            //    values: new { securityCode = userToCreate.SecurityCode });
+            // create an activation link - we need an absolute URL, therefore
+            // we use Url.PageLink instead of Url.Page
+            var activationLink = Url.PageLink(
+                pageName: "/user/activation/index",
+                values: new { securityCode = userToCreate.SecurityCode });
 
-            //Console.WriteLine(activationLink);
-            //return Redirect("~/User/ActivationCodeSent");
+            Console.WriteLine(activationLink); // for demo only. Otherwise use exchange server for sending mails
+            return Redirect("~/User/ActivationCodeSent");
 
-            // Issue authentication cookie (log the user in)
-            var isUser = new IdentityServerUser(userToCreate.Subject)
-            {
-                DisplayName = userToCreate.UserName
-            };
-            await HttpContext.SignInAsync(isUser);
+            // do not login until you have activated your acc
+            //// Issue authentication cookie (log the user in)
+            //var isUser = new IdentityServerUser(userToCreate.Subject)
+            //{
+            //    DisplayName = userToCreate.UserName
+            //};
+            //await HttpContext.SignInAsync(isUser);
 
-            // continue with the flow     
-            if (_interaction.IsValidReturnUrl(Input.ReturnUrl)
-                || Url.IsLocalUrl(Input.ReturnUrl))
-            {
-                return Redirect(Input.ReturnUrl);
-            }
+            //// continue with the flow     
+            //if (_interaction.IsValidReturnUrl(Input.ReturnUrl)
+            //    || Url.IsLocalUrl(Input.ReturnUrl))
+            //{
+            //    return Redirect(Input.ReturnUrl);
+            //}
 
-            return Redirect("~/");
+            //return Redirect("~/");
         }
     }
 }

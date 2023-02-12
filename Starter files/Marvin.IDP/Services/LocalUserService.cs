@@ -2,6 +2,9 @@
 using Marvin.IDP.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace Marvin.IDP.Services
 {
@@ -111,12 +114,44 @@ namespace Marvin.IDP.Services
                 throw new Exception("Username must be unique");
             }
 
+            if (_context.Users.Any(u => u.Email == userToAdd.Email))
+            {
+                throw new Exception("Email must be unique");
+            }
+
+            // Security code for activating user (per email, SMS etc.)
+            // the encoding is more about the integrity of the data, instead of security
+            userToAdd.SecurityCode = Convert.ToBase64String(RandomNumberGenerator.GetBytes(128));
+            userToAdd.SecurityCodeExpirationDate = DateTime.UtcNow.AddHours(1);
+
+
             // hash & salt the password
             userToAdd.Password = _passwordHasher.HashPassword(userToAdd, password);
 
             _context.Users.Add(userToAdd);
         }
 
+        public async Task<bool> ActivateUserAsync(string securityCode)
+        {
+            if (string.IsNullOrWhiteSpace(securityCode))
+            {
+                throw new ArgumentNullException(nameof(securityCode));
+            }
+
+            // find an user with this security code as an active security code.  
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.SecurityCode == securityCode &&
+                u.SecurityCodeExpirationDate >= DateTime.UtcNow);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Active = true;
+            user.SecurityCode = null;
+            return true;
+        }
 
         public async Task<bool> SaveChangesAsync()
         {

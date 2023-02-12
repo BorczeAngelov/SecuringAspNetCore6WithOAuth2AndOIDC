@@ -17,6 +17,16 @@ namespace Marvin.IDP.Entities
         [MaxLength(200)]
         public string Password { get; set; }
 
+        [MaxLength(200)]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Security code for activating user (per email, SMS etc.)
+        /// </summary>
+        [MaxLength(200)]
+        public string SecurityCode { get; set; }
+        public DateTime SecurityCodeExpirationDate { get; set; }
+
         [Required]
         public bool Active { get; set; }
 
