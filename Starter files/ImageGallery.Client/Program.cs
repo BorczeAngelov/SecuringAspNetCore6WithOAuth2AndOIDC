@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
-    .AddJsonOptions(configure => 
+    .AddJsonOptions(configure =>
         configure.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 // Access tokens are passed to the API as Bearer tokens
@@ -32,7 +32,8 @@ builder.Services.AddHttpClient("APIClient", client =>
 
 builder.Services.AddHttpClient("IDPClient", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5001/");
+    //client.BaseAddress = new Uri("https://localhost:5001/");     
+    client.BaseAddress = new Uri("https://localhost:44300/"); // now it is hosted on IISExpress, for Windows Authentication
 });
 
 builder.Services.AddAuthentication(options =>
@@ -46,7 +47,9 @@ builder.Services.AddAuthentication(options =>
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.Authority = "https://localhost:5001/"; // the address of our identity provider
+
+    //options.Authority = "https://localhost:5001/";
+    options.Authority = "https://localhost:44300/"; // now it is hosted on IISExpress, for Windows Authentication
     options.ClientId = "imagegalleryclient";
     options.ClientSecret = "secret";
     options.ResponseType = "code"; // code grant type

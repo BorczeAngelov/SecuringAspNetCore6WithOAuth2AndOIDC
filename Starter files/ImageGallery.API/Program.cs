@@ -50,7 +50,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           //});
           .AddOAuth2Introspection(options => // we replace Jwt with RefrenceToken
           {
-              options.Authority = "https://localhost:5001";
+              //options.Authority = "https://localhost:5001";
+              options.Authority = "https://localhost:44300"; // now it is hosted on IISExpress, for Windows Authentication
               options.ClientId = "imagegalleryapi";
               options.ClientSecret = "apisecret";
               options.NameClaimType = "given_name";
